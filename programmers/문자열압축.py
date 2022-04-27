@@ -1,3 +1,5 @@
+# https://programmers.co.kr/learn/courses/30/lessons/60057
+
 def solution(s):
     total_length = len(s)
     divisor = []
