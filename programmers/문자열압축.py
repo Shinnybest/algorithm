@@ -1,39 +1,28 @@
-# https://programmers.co.kr/learn/courses/30/lessons/60057
-
 def solution(s):
-    total_length = len(s)
-    divisor = []
-    for i in range(1, total_length+1):
-        if total_length % i == 0:
-            divisor.append(i)
-
-    print("divisor ", divisor)
-    
+    if len(s) == 1:
+        return 1
+            
     answer_list = []
-
-    for num in divisor:
-        tmp = s[0:num]
+    
+    for i in range(1, (len(s)//2)+1):
+        prev = s[0:i]
         cnt = 1
-        multiple_num = total_length // num
-        new = ''
-        prev = ''
-
-        for i in range(1, multiple_num):
-            if tmp == s[num*i:num*(i+1)]:
-                cnt += 1
-                new = str(cnt) + tmp
-                print("new ", new)
+        answer = ''
+        for j in range(i, len(s), i):
+            cur = s[j:j+i]
+            if prev == cur:
+                cnt+=1
             else:
-                prev += new
-                prev += tmp
-                tmp = s[num*i:num*(i+1)]
+                if cnt != 1:
+                    answer = answer + str(cnt) + prev
+                else:
+                    answer = answer + prev
+                prev = cur
                 cnt = 1
-                new = ''
-                print("prev ", prev)
-        answer_list.append(len(prev))
-
-    answer = min(answer_list)
-    print(answer)
-    return answer
-
-solution("abcabcabcabcdededededede")
+        if cnt != 1:
+            answer = answer + str(cnt) + prev
+        else:
+            answer = answer + prev
+        answer_list.append(len(answer))
+    
+    return min(answer_list)
