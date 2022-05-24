@@ -1,25 +1,38 @@
-# https://velog.io/@younge/Python-%ED%94%84%EB%A1%9C%EA%B7%B8%EB%9E%98%EB%A8%B8%EC%8A%A4-%EB%94%94%EC%8A%A4%ED%81%AC-%EC%BB%A8%ED%8A%B8%EB%A1%A4%EB%9F%AC-%ED%9E%99
-
 import heapq
 
 def solution(jobs):
-    
-    heapq.heapify(jobs)
-    
-    total = [jobs[0][0], jobs[0][1], jobs[0][1] - jobs[0][0], jobs[0][1]]
-    
-    for i in range(1, len(jobs)):
-        start = jobs[i][0]
-        run = jobs[i][1]
-        end = total[i-1][2] + jobs[i][1]
-        spend = total[i-1][2] - jobs[i][0] + jobs[i][1]
-        total.append([start, run, end, spend])
-        
-    
-    
-    all_time = 0
-    
-    for i in range(len(total)):
-        all_time += total[i][3]
-        
-    return all_time / len(total)
+    answer, now, i = 0,0,0
+    start = -1
+    heap = []
+    while i<len(jobs):
+        for j in jobs:
+            if start < j[0] <=now:
+                heapq.heappush(heap, [j[1], j[0]])
+        if len(heap) > 0:
+            current = heapq.heappop(heap)
+            start = now
+            now = now + current[0]
+            answer = answer + (now-current[1])
+            i += 1
+        else:
+            now += 1
+    return int(answer//len(jobs))
+
+
+def solution2(jobs):
+    tasks = sorted([(x[1], x[0]) for x in jobs], key=lambda x: (x[1], x[0]), reverse=True)
+    q = []
+    heapq.heappush(q, tasks.pop())
+    current_time, total_response_time = 0, 0
+    while len(q) > 0:
+        dur, arr = heapq.heappop(q)
+        current_time = max(current_time + dur, arr + dur)
+        total_response_time += current_time - arr
+        while len(tasks) > 0 and tasks[-1][1] <= current_time:
+            heapq.heappush(q, tasks.pop())
+        if len(tasks) > 0 and len(q) == 0:
+            heapq.heappush(q, tasks.pop())
+    return total_response_time // len(jobs)
+
+
+solution2([[0, 3], [1, 9], [2, 6]])
