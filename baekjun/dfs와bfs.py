@@ -1,30 +1,40 @@
-from collections import deque
+from collections import defaultdict, deque
 
 N, M, V = map(int, input().split())
-
-graph = [[0] * (N+1) for _ in range(N+1)]
-
+dict = defaultdict(list)
 for _ in range(M):
-    m1, m2 = map(int, input().split())
-    graph[m1][m2] = graph[m2][m1] = 1
+    a, b = map(int, input().split())
+    dict[a].append(b)
+    dict[b].append(a)
 
-result = [V]
+for i in range(1, N+1):
+    dict[i].sort()
+
+answer = []
+
+def dfs(num):
+    if num in answer:
+        return
+    answer.append(num)
+    print(num, end=' ')
+    for i in dict[num]:
+        dfs(i)
+
+dfs(V)
+
 
 def bfs(start):
-    queue = deque()
-    discovered = []
-    for i in range(N+1):
-        if graph[start][i] == 1:
-            queue.append(graph[start][i])
-    while queue:
-        discovered.append(queue.popleft())
-    result.append(discovered)
-    for i in range(len(discovered)):
-        bfs(discovered[i])
-
-
-def dfs(start, discovered = []):
-    discovered.append(start)
-    for i in range(N+1):
-        if graph[start][i] == 1 and graph[start][i] not in discovered:
-            dfs(graph[start][i])
+    q = deque([start])
+    answer = [start]
+    
+    print(start, end=' ')
+    while q:
+        n = q.popleft()
+        for num in dict[n]:
+            if num not in answer:
+                answer.append(num)
+                print(num, end=' ')
+                q.append(num)
+    return answer
+print()
+bfs(V)
